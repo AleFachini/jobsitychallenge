@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -17,6 +18,17 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: Text('TVMaze for Jobsity'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Get.toNamed(Routes.SEARCH);
+            },
+          )
+        ],
       ),
       body: controller.obx(
           (data) => NotificationListener<ScrollEndNotification>(
@@ -38,14 +50,6 @@ class HomeView extends GetView<HomeController> {
                   padding: EdgeInsets.all(8),
                   itemCount: data.body.length,
                   itemBuilder: (BuildContext context, int index) {
-                    //for testing only////////////
-                    /*Timer(
-                      Duration(seconds: 5),
-                      () => controller.scrollController.jumpTo((controller
-                              .scrollController.position.maxScrollExtent -
-                          15)),
-                    );*/
-                    /////////////////////////////////
                     return Card(
                       child: Column(
                         children: <Widget>[
@@ -59,8 +63,14 @@ class HomeView extends GetView<HomeController> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Center(
-                                child: Image.network(
-                                  '${data.body[index]['image']['medium']}',
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      '${data.body[index]['image']['medium']}',
+                                  placeholder: (context, url) =>
+                                      new CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                          'images/default_placeholder.png'),
                                 ),
                               ),
                             ),
